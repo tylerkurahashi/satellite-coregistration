@@ -1,0 +1,61 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv
+.env
+
+# Jupyter Notebooks
+.ipynb_checkpoints
+*.ipynb_checkpoints/
+
+# Data
+data/raw/*
+data/processed/*
+data/external/*
+data/interim/*
+!data/*/.gitkeep
+*.tif
+*.csv
+
+# Models
+models/checkpoints/*
+models/trained/*
+!models/*/.gitkeep
+
+# Logs
+logs/*
+!logs/.gitkeep
+*.log
+
+# Experiments
+experiments/runs/*
+experiments/results/*
+!experiments/*/.gitkeep
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# ML/DL frameworks
+.pytorch_models/
+.tensorflow/
+wandb/
+mlruns/
+
+# Credentials
+*.pem
+*.key
+secrets/
+credentials/
