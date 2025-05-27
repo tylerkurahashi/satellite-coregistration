@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  sat-coregistration:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: sat-coregistration:latest
+    container_name: sat-coregistration-dev
+    
+    # GPU support
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: 1
+    #           capabilities: [gpu]
+    
+    volumes:
+      # Mount the entire project directory
+      - ../:/workspace
+      
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+      - CUDA_VISIBLE_DEVICES=0
+      - PYTHONPATH=/workspace
+      
+    ports:
+      # SSH
+      - "22222:22"
+      
+    stdin_open: true
+    tty: true
