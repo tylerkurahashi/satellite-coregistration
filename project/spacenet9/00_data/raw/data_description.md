@@ -5,16 +5,27 @@ Optical to SAR image registration.
 For training, there are three regions. Each region includes a SAR image scene (GeoTIFF), optical image scene (GeoTIFF), and tiepoints (CSV)
 
 ```bash
-train/
-├── 02_optical_train_01.tif
-├── 02_sar_train_01.tif
-├── 02_tiepoints_train_01.csv
-├── 02_optical_train_02.tif
-├── 02_sar_train_02.tif
-├── 02_tiepoints_train_02.csv
-├── 03_optical_train_01.tif
-├── 03_sar_train_01.tif
-├── 03_tiepoints_train_01.csv
+.
+├── publictest
+│   ├── 001
+│   │   ├── 0_optical_publictest.tif
+│   │   └── 1_sar_publictest.tif
+│   └── 002
+│       ├── 03_optical_publictest.tif
+│       └── 03_sar_publictest.tif
+└── train
+    ├── 001
+    │   ├── 0_optical.tif
+    │   ├── 1_sar.tif
+    │   └── 2_tiepoints.csv
+    ├── 002
+    │   ├── 0_optical.tif
+    │   ├── 1_sar.tif
+    │   └── 2_tiepoints.csv
+    └── 003
+        ├── 0_optical.tif
+        ├── 1_sar.tif
+        └── 2_tiepoints.csv
 ```
 
 #### Optical imagery
