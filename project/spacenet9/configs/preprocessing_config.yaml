@@ -1,0 +1,26 @@
+# SpaceNet9 前処理設定ファイル
+
+# 入力データパス
+input:
+  raw_data_dir: "00_data/raw"
+  train_regions: ["001", "002", "003"]
+
+# 出力データパス  
+output:
+  processed_data_dir: "00_data/processed"
+  interim_data_dir: "00_data/interim"
+  
+# タイリング設定
+tiling:
+  tile_sizes: 256  # タイルサイズ（ピクセル）
+  padding_mode: "skip"  # パディングモード: "skip" または "pad"
+  
+# リサンプリング設定
+resampling:
+  target_resolution: 0.3  # 目標解像度（メートル/ピクセル）
+  interpolation_optical: "bilinear"  # 光学画像の補間手法
+  interpolation_sar: "bilinear"  # SAR画像の補間手法
+  
+# 座標系設定
+coordinate_system:
+  target_crs: "EPSG:4326"  # 目標座標系
