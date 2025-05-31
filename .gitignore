@@ -15,13 +15,14 @@ ENV/
 *.ipynb_checkpoints/
 
 # Data
-data/raw/*
-data/processed/*
-data/external/*
-data/interim/*
+raw
+external
+interim
+dataset
 !data/*/.gitkeep
 *.tif
 *.csv
+*.geojson
 
 # Models
 models/checkpoints/*
