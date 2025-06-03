@@ -1,0 +1,50 @@
+# SpaceNet9 Evaluation Configuration for Optical Model 003
+
+# Device settings
+device: "cuda"
+
+# Data settings
+data:
+  data_root: "/workspace/project/spacenet9/00_data"
+  batch_size: 8
+  num_workers: 2
+  task: "opt_keypoint_detection"
+  regions: ["001"]  # Regions to evaluate on
+
+# Model settings (should match training config)
+model:
+  name: "unet"
+  encoder: "resnet34"
+  in_channels: 3
+  classes: 1
+
+# Checkpoint path
+checkpoint_path: "/workspace/project/spacenet9/02_traineval/experiments/spacenet9_baseline_unet_opt-003/checkpoints/best_checkpoint.pth"
+
+# Output directory
+output_dir: "/workspace/project/spacenet9/02_traineval/evaluation_results/opt_003"
+
+# Evaluation settings
+evaluation:
+  pixel_error_threshold: 10.0  # Threshold for success rate calculation
+  evaluate_matching: true  # Whether to evaluate keypoint matching
+  num_vis_batches: 5  # Number of batches to visualize
+  
+  # Post-processing settings
+  post_process:
+    threshold: 0.3  # Lowered threshold to reduce false positives
+    nms_radius: 5  # Increased NMS radius
+    max_keypoints: 50  # Reduced max keypoints
+  
+  # Transform estimation settings
+  transform_type: "affine"  # Options: affine, homography, similarity
+  ransac_threshold: 5.0  # RANSAC reprojection threshold
+
+# Visualization settings
+visualization:
+  save_heatmaps: true
+  save_keypoints: true
+  save_matches: true
+  colormap: "hot"
+  keypoint_color: [255, 0, 0]  # Red
+  match_color: [0, 255, 0]  # Green

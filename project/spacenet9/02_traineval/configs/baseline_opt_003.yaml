@@ -1,0 +1,98 @@
+# SpaceNet9 Improved Training Configuration - Optical Keypoint Detection
+# Enhanced with better loss functions and parameters to address precision/recall imbalance
+
+# Experiment settings
+exp_name: "spacenet9_improved_unet_opt-003"
+exp_dir: "./experiments"
+seed: 42
+use_wandb: true
+wandb_project: "spacenet9"
+
+# Device settings
+device: "cuda"
+
+# Data settings
+data:
+  data_root: "/workspace/project/spacenet9/00_data"
+  batch_size: 16
+  num_workers: 0
+  task: "opt_keypoint_detection"  # Input: SAR, Target: optical keypoints
+  regions: ["001", "002", "003"]
+  val_ratio: 0.2
+  test_ratio: 0.0
+  tile_size: 256
+  heatmap_sigma: 13
+
+# Model settings
+model:
+  name: "unet"
+  encoder: "resnet34"
+  encoder_weights: "imagenet"
+  in_channels: 3
+  classes: 1
+
+# Enhanced Loss settings to reduce false positives
+loss:
+  type: "keypoint_detection"
+  params:
+    loss_type: "mse"
+    use_focal: true          # Added to handle class imbalance
+    focal_weight: 0.7        # Increased weight for focal loss
+    focal_alpha: 0.75        # Higher alpha to penalize false positives more
+    focal_gamma: 3.0         # Higher gamma for more focus on hard examples
+    use_dice: true           # Added Dice loss for better segmentation
+    dice_weight: 0.3
+    dice_smooth: 0.000001
+    use_binary_dice: true    # Added binary Dice for threshold-based evaluation
+    binary_dice_weight: 0.2
+    binary_dice_threshold: 0.3  # Lower threshold to be more selective
+
+# Optimizer settings
+optimizer:
+  type: "adam"
+  lr: 0.0001
+  weight_decay: 0.00001     # Added small weight decay for regularization
+
+# Improved Learning rate scheduler
+scheduler:
+  type: "cosine"           # Changed to cosine annealing
+  T_max: 100              # Maximum epochs
+  eta_min: 0.0000001           # Minimum learning rate
+
+# Training settings
+training:
+  epochs: 100
+  gradient_clip: 1.0
+  early_stopping_patience: 25    # Increased patience
+  early_stopping_delta: 0.0001
+  max_checkpoints: 5
+  resume: null
+  vis_interval: 10
+
+# Improved Evaluation settings
+evaluation:
+  pixel_error_threshold: 10.0
+  post_process:
+    threshold: 0.3         # Lowered threshold to reduce false positives
+    nms_radius: 5          # Increased NMS radius
+    max_keypoints: 50      # Reduced max keypoints
+
+# Data augmentation settings
+augmentation:
+  random_rotate90: 0.5
+  flip: 0.5
+  shift_scale_rotate:
+    shift_limit: 0.0625
+    scale_limit: 0.1
+    rotate_limit: 15
+    p: 0.5
+  brightness_contrast:
+    brightness_limit: 0.15  # Reduced for SAR images
+    contrast_limit: 0.15
+    p: 0.3
+  noise:
+    var_limit: [5.0, 25.0]  # Reduced noise for better training
+    p: 0.2
+  blur:
+    blur_limit: [3, 5]      # Reduced blur
+    p: 0.2
