@@ -1,0 +1,103 @@
+# SpaceNet9 Paper準拠 回帰ベース光学モデル設定
+
+# Basic settings
+device: "cuda"
+seed: 42
+exp_name: "spacenet9_regression_baseline_opt-005"
+exp_dir: "./experiments"
+use_wandb: true
+wandb_project: "spacenet9"
+
+# Data settings
+data:
+  data_root: "/workspace/project/spacenet9/00_data"
+  batch_size: 8
+  num_workers: 0  # Set to 0 to avoid shared memory issues
+  task: "opt_keypoint_detection"
+  regions: ["001", "002", "003"]  # Use all available regions
+  val_ratio: 0.2
+  test_ratio: 0.1
+  augmentation: true
+  
+  # Paper準拠のヒートマップ設定
+  heatmap:
+    sigma: 13.0  # Paper標準: σ=13px
+    normalize: true
+    generation_method: "gaussian"
+
+# Model settings - Paper準拠のシンプルU-Net
+model:
+  name: "unet"  # 基本U-Netアーキテクチャ
+  encoder: "resnet34"  # Paper準拠のバックボーン
+  encoder_weights: "imagenet"
+  in_channels: 3
+  classes: 1
+  dropout: 0.1  # 軽度のドロップアウト
+
+# Loss settings - Paper準拠の回帰損失
+loss:
+  type: "keypoint_regression"  # 新しい回帰損失
+  positive_weight: 10.0  # ガウシアン部分への重み
+  regularization_weight: 0.1  # 正則化項の重み
+  threshold: 0.1  # 重み付け判定閾値
+
+# Training settings - Paper準拠
+training:
+  epochs: 100  # Paper準拠
+  gradient_clip: 1.0
+  accumulation_steps: 1  # シンプルな学習
+  mixed_precision: true
+  
+  # Early stopping
+  early_stopping:
+    patience: 15
+    min_delta: 0.001  # 位置誤差ベース
+    mode: "min"
+    monitor: "val_mean_pixel_error"  # 新しい評価指標
+  
+  # Checkpointing
+  checkpoint:
+    save_freq: 5
+    save_best: true
+    keep_last: 5
+
+# Optimizer settings - Paper準拠
+optimizer:
+  type: "adam"  # Paper準拠
+  lr: 1.0e-4  # Paper初期学習率
+  weight_decay: 0.0001
+
+# Scheduler settings - Paper準拠
+scheduler:
+  type: "step"  # Paper準拠: 30epoch後にlr×0.01
+  step_size: 30
+  gamma: 0.01
+
+# Logging settings
+logging:
+  log_interval: 10
+  save_visualizations: true
+  num_vis_samples: 4
+
+# Validation settings
+validation:
+  val_interval: 1
+  num_vis_batches: 3
+
+# Evaluation settings - 新しい位置誤差ベース評価
+evaluation:
+  pixel_error_threshold: 10.0  # Paper準拠の成功判定閾値
+  max_distance: 50.0  # マッチング可能な最大距離
+  distance_thresholds: [5.0, 10.0, 15.0, 20.0]  # 多段階評価
+  
+  # キーポイント抽出設定
+  keypoint_extraction:
+    threshold: 0.1
+    nms_radius: 5
+    max_keypoints: 100
+
+# Post-processing settings
+post_process:
+  threshold: 0.1  # 低い閾値（回帰ベース）
+  nms_radius: 5
+  max_keypoints: 100

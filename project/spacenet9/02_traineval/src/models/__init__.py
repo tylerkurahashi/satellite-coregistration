@@ -36,6 +36,15 @@ from .losses import (
     create_loss
 )
 
+from .regression_losses import (
+    WeightedMSELoss,
+    GaussianRegularization,
+    KeypointRegressionLoss,
+    AdaptiveWeightedMSELoss,
+    FocalMSELoss,
+    create_regression_loss
+)
+
 __all__ = [
     # Models
     'KeypointUNet',
@@ -67,5 +76,13 @@ __all__ = [
     'KeypointDetectionLoss',
     'DiceLoss',
     'BinaryDiceLoss',
-    'create_loss'
+    'create_loss',
+    
+    # Regression Losses
+    'WeightedMSELoss',
+    'GaussianRegularization',
+    'KeypointRegressionLoss',
+    'AdaptiveWeightedMSELoss',
+    'FocalMSELoss',
+    'create_regression_loss'
 ]

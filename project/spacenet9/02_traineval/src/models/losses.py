@@ -392,6 +392,10 @@ def create_loss(config: dict) -> nn.Module:
             weights[name] = loss_config.get('weight', 1.0)
         
         return CombinedLoss(losses, weights)
+    elif loss_type == 'keypoint_regression':
+        # Import here to avoid circular imports
+        from .regression_losses import create_regression_loss
+        return create_regression_loss(config)
     else:
         raise ValueError(f"Unknown loss type: {loss_type}")
 
