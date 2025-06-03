@@ -319,6 +319,9 @@ class KeypointFPNv2(nn.Module):
         Returns:
             Output heatmap (B, classes, H, W)
         """
+        # Store input size for final upsampling
+        input_size = x.shape[-2:]
+        
         # Encoder forward
         features = self.encoder(x)[1:]  # Skip first feature
         
@@ -362,6 +365,15 @@ class KeypointFPNv2(nn.Module):
         
         # Final refinement
         output = self.final_conv(output)
+        
+        # Ensure output matches input size
+        if output.shape[-2:] != input_size:
+            output = F.interpolate(
+                output,
+                size=input_size,
+                mode='bilinear',
+                align_corners=False
+            )
         
         return output
 

@@ -1,0 +1,93 @@
+# SpaceNet9 FPN v2 Configuration for Optical Model
+
+# Basic settings
+exp_name: "spacenet9_fpn_v2_opt-004"
+exp_dir: "./experiments"
+seed: 42
+use_wandb: true
+wandb_project: "spacenet9"
+
+# Data settings
+data:
+  data_root: "/workspace/project/spacenet9/00_data"
+  batch_size: 6  # Smaller batch due to larger model
+  num_workers: 0  # Set to 0 to avoid shared memory issues
+  task: "opt_keypoint_detection"
+  regions: ["001", "002", "003"]  # Use all available regions
+  val_ratio: 0.2
+  test_ratio: 0.0
+  augmentation: true
+
+# Model settings
+model:
+  name: "fpn_v2"
+  encoder: "efficientnet-b4"  # Efficient backbone
+  encoder_weights: "imagenet"
+  in_channels: 3
+  classes: 1
+  # FPN v2 specific parameters
+  encoder_depth: 5
+  pyramid_channels: 256
+  use_attention: true
+  use_ppm: true  # Pyramid Pooling Module
+  dropout: 0.2
+
+# Loss settings (from improved config)
+loss:
+  type: "keypoint_detection"
+  focal_alpha: 0.75
+  focal_gamma: 3.0
+  dice_weight: 0.3
+  smooth: 0.000001
+
+# Training settings
+training:
+  epochs: 100
+  gradient_clip: 1.0
+  accumulation_steps: 3  # Effective batch size = 18
+  mixed_precision: true
+  
+  # Early stopping
+  early_stopping:
+    patience: 20
+    min_delta: 0.0001
+    mode: "min"
+  
+  # Checkpointing
+  checkpoint:
+    save_freq: 5
+    save_best: true
+    keep_last: 5
+
+# Optimizer settings
+optimizer:
+  type: "adamw"
+  lr: 0.0002  # Lower learning rate for EfficientNet
+  weight_decay: 0.01
+
+# Scheduler settings
+scheduler:
+  type: "cosine"
+  eta_min: 1.0e-7
+  warmup_epochs: 5
+  warmup_lr: 1.0e-6
+
+# Logging settings
+logging:
+  log_interval: 10
+  save_visualizations: true
+  num_vis_samples: 4
+
+# Validation settings
+validation:
+  val_interval: 1
+  num_vis_batches: 3
+
+# Post-processing settings
+post_process:
+  threshold: 0.3
+  nms_radius: 5
+  max_keypoints: 50
+  use_adaptive: true
+  adaptive_percentile: 90.0
+  use_multi_scale: true  # Enable multi-scale post-processing
